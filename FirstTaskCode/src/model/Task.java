@@ -3,24 +3,25 @@ package model;
 import java.util.Calendar;
 
 public class Task {
-    String title, description;
+    
+    String name;
+    String description;
     Category category;
     Calendar limitDate;
-
-    public Task(String title, String descrip, Category cat, Calendar date){
-        this.title=title;
-        this.description=descrip;
-        this.category=cat;
-        this.limitDate=date;
-
+    
+    public Task(String name, String description, Category category, Calendar limitDate) {
+        this.name = name;
+        this.description = description;
+        this.category = category;
+        this.limitDate = limitDate;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -46,5 +47,4 @@ public class Task {
     public void setLimitDate(Calendar limitDate) {
         this.limitDate = limitDate;
     }
-    
 }
