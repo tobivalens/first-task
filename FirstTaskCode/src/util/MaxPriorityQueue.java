@@ -1,11 +1,11 @@
 package util;
 
-public class MaxPriorityQueue<T extends Comparable<T>>  {
+public class MaxPriorityQueue<T extends Comparable<T>> {
 
     private MaxHeap<T> heap;
 
     public MaxPriorityQueue(int maxsize) {
-        heap = new MaxHeap<>(maxsize);
+        heap = new MaxHeap<T>();
     }
 
     public T extractMax() {

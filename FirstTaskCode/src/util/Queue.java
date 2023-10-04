@@ -1,5 +1,7 @@
 package util;
 
+import customExceptions.QueueIsEmptyException;
+
 public class Queue<T> {
 
     private DoubleLinkedList<T> list;
@@ -12,16 +14,20 @@ public class Queue<T> {
         list.addLast(newElement);
     }
 
-    public void deQueue() {
+    public void deQueue() throws QueueIsEmptyException {
         T removedElement = list.deleteFirst();
         if (removedElement == null) {
-            // La cola está vacía, puedes manejar este caso si es necesario
-            // Por ejemplo, lanzando una excepción o mostrando un mensaje.
+            throw new QueueIsEmptyException("The queue is empty");
         }
     }
 
-    public DoubleNode<T> getFront() {
-        return list.isEmpty() ? null : list.findNode(0);
+    public DoubleNode<T> front() throws QueueIsEmptyException{
+        if(list.isEmpty() == true){
+            throw new QueueIsEmptyException("The queue is empty");
+        }
+        else{
+            return list.getFirst();
+        }
     }
 
     public int getSize() {

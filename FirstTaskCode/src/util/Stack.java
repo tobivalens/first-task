@@ -1,5 +1,7 @@
 package util;
 
+import customExceptions.StackIsEmptyException;
+
 public class Stack<T> {
 
     private DoubleLinkedList<T> list;
@@ -9,19 +11,23 @@ public class Stack<T> {
     }
 
     public void push(T newElement) {
-        list.addFirst(newElement);
+        list.addLast(newElement);
     }
 
-    public void pop() {
-        T removedElement = list.deleteFirst();
+    public void pop() throws StackIsEmptyException {
+        T removedElement = list.deleteLast();
         if (removedElement == null) {
-            // La pila está vacía, puedes manejar este caso si es necesario
-            // Por ejemplo, lanzando una excepción o mostrando un mensaje.
+            throw new StackIsEmptyException("The stack is empty");
         }
     }
 
-    public DoubleNode<T> topElement() {
-        return list.isEmpty() ? null : list.findNode(0);
+    public DoubleNode<T> top() throws StackIsEmptyException{
+        if(list.isEmpty() == true){
+            throw new StackIsEmptyException("The stack is empty");
+        }
+        else{
+            return list.getLast();
+        }
     }
 
     public int getSize() {

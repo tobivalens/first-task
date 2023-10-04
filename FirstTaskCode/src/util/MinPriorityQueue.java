@@ -4,8 +4,8 @@ public class MinPriorityQueue<T extends Comparable<T>>  {
 
 	private MinHeap<T> heap;
 
-	public MinPriorityQueue(int maxsize) {
-		heap = new MinHeap<>(maxsize);
+	public MinPriorityQueue() {
+		heap = new MinHeap<>();
 	}
 
 	public T extractMin() {

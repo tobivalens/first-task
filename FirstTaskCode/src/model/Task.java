@@ -2,18 +2,18 @@ package model;
 
 import java.util.Calendar;
 
-public class Task {
+public class Task implements Comparable<Task>{
     
     String name;
     String description;
-    Category category;
     Calendar limitDate;
+    PriorityLevel priorityLevel;
     
-    public Task(String name, String description, Category category, Calendar limitDate) {
+    public Task(String name, String description, Calendar limitDate, PriorityLevel priorityLevel) {
         this.name = name;
         this.description = description;
-        this.category = category;
         this.limitDate = limitDate;
+        this.priorityLevel = priorityLevel;
     }
 
     public String getName() {
@@ -32,19 +32,24 @@ public class Task {
         this.description = description;
     }
 
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
     public Calendar getLimitDate() {
         return limitDate;
     }
 
     public void setLimitDate(Calendar limitDate) {
         this.limitDate = limitDate;
+    }
+
+    public PriorityLevel getPriorityLevel() {
+        return priorityLevel;
+    }
+
+    public void setPriorityLevel(PriorityLevel priorityLevel) {
+        this.priorityLevel = priorityLevel;
+    }
+
+    @Override
+    public int compareTo(Task otherTask) {
+        return this.limitDate.compareTo(otherTask.limitDate);
     }
 }

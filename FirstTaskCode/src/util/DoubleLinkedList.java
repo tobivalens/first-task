@@ -144,4 +144,20 @@ public class DoubleLinkedList<T> {
     public int getNumberOfElements() {
         return numberOfElements;
     }
+
+    public DoubleNode<T> getFirst() {
+        return first;
+    }
+
+    public void setFirst(DoubleNode<T> first) {
+        this.first = first;
+    }
+
+    public DoubleNode<T> getLast() {
+        return last;
+    }
+
+    public void setLast(DoubleNode<T> last) {
+        this.last = last;
+    }
 }

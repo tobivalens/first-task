@@ -1,5 +1,7 @@
 package util;
 
+import customExceptions.NonExistentKeyException;
+
 public class HashNode<K,V extends Comparable<V>> {
 
 	private K key; 
@@ -50,8 +52,30 @@ public class HashNode<K,V extends Comparable<V>> {
 	public void add(HashNode<K, V> nextNode) {
 		if(next == null) {
 			next = nextNode;
-		}else {
+		}
+		else {
 			next.add(nextNode);
+		}
+	}
+
+	public void removeLast() {
+		if(next.getNext() == null) {
+			next = null;
+		}else {
+			next.removeLast();
+		}
+	}
+	
+	public HashNode<K, V> getObjet(V value) throws NonExistentKeyException{
+		if(next != null) {
+			if(next.value.compareTo(value)== 0) {
+				return next;
+			}else {
+				return next.getObjet(value);
+			}
+		}
+		else {
+			throw new NonExistentKeyException("");
 		}
 	}
 }
