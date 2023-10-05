@@ -90,7 +90,9 @@ public class HashTable<K extends Comparable<K>,V extends Comparable<V>> {
 		for(int i = 0; i < hashList.length; i++){
 			if(hashList[i] != null){
 				if(hashList[i].getNext() == null){
-					msg += hashList[i].getKey().toString();
+					if(hashList[i].getStatus().equals(HashNodeStatus.ACTIVE)){
+						msg += "Key: " + hashList[i].getKey() + ", "+ hashList[i].getValue().toString();
+					}
 				}
 				else{
 					msg += hashList[i].print();

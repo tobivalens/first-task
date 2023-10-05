@@ -62,7 +62,7 @@ public class Task implements Comparable<Task>{
 
     @Override
     public String toString() {
-        return "\nName: " + name + ", Description: " + description + ", Limit Date: " + getLimitDateString() + ", Priority Level: "
-                + priorityLevel;
+        return "Name: " + name + ", Description: " + description + ", Limit Date: " + getLimitDateString() + ", Priority Level: "
+                + priorityLevel + "\n";
     }
 }

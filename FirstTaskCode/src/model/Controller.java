@@ -101,6 +101,7 @@ public class Controller {
         else if(task.getPriorityLevel().equals(PriorityLevel.NON_PRIORITY)){
             queueTask.getList().delete(task);
         }
+        hashTableTask.deleteElement(key);
     }
 
     public String showAllTasks(){

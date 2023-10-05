@@ -98,7 +98,7 @@ public class HashNode<K extends Comparable<K>,V extends Comparable<V>> {
 		String msg = "";
 		if(status.equals(HashNodeStatus.ACTIVE)){
 			if(value != null){
-				msg += value.toString();
+				msg += "Key: " + key + ", " + value.toString();
 			}
 		}
 		if(next != null){

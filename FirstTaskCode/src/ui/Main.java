@@ -1,7 +1,10 @@
 package ui;
 import java.util.Scanner;
 
+import customExceptions.HashIsEmptyException;
 import customExceptions.HeapFullException;
+import customExceptions.NonExistentKeyException;
+import customExceptions.ObjectNotFoundException;
 import model.Controller;
 
 public class Main {
@@ -32,6 +35,7 @@ public class Main {
                 addTask();
                 break;
             case 2:
+                modifyTask();
                 break;
         }
     }
@@ -45,7 +49,6 @@ public class Main {
                 "(4) Display list of Tasks\n" +
                 "(5) Undo an Action\n" +
                 "(0) Exit\n"
-
         );
         input = sc.nextInt();
         sc.nextLine();
@@ -78,7 +81,34 @@ public class Main {
         }
 
         System.out.println(controller.showAllTasks());
-
     }
 
+    public void modifyTask(){
+
+        System.out.println("Please enter the key of the task you'd like to modify");
+        int key= sc.nextInt();
+        sc.nextLine();
+
+        System.out.println("Please enter the new information of the task");
+        System.out.println("New title of the task");
+        String title= sc.nextLine();
+
+        System.out.println("New description of the task");
+        String description= sc.nextLine();
+
+        System.out.println("Insert the new limit date of the task (YYYY/MM/DD)");
+        String date= sc.nextLine();
+
+        System.out.println("Please indicate the new type of task ");
+        System.out.println("(1) Priority");
+        System.out.println("(2) Non-Priority");
+        int state= sc.nextInt();
+
+        try {
+            controller.modifyTask(key, title, description, date, state);
+        } catch (HashIsEmptyException | NonExistentKeyException | ObjectNotFoundException | HeapFullException e) {
+            e.printStackTrace();
+        }
+        System.out.println(controller.showAllTasks());
+    }
 }
