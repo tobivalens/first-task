@@ -1,9 +1,8 @@
 package customExceptions;
 
-@SuppressWarnings("serial")
 public class NonExistentKeyException extends Exception{
 
-	public NonExistentKeyException(String message) {
-		super(message);
+	public NonExistentKeyException(String msg){
+		super(msg);
 	}
 }

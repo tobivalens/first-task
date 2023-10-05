@@ -1,9 +1,10 @@
 package util;
 
 class DoubleNode<T> {
-    T value;
-    DoubleNode<T> next;
-    DoubleNode<T> previous;
+
+    private T value;
+    private DoubleNode<T> next;
+    private DoubleNode<T> previous;
 
     public DoubleNode(T value) {
         this.value = value;

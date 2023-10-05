@@ -2,14 +2,14 @@ package util;
 
 public class DoubleLinkedList<T> {
 
-    DoubleNode<T> first;
-    DoubleNode<T> last;
-    int numberOfElements;
+    private DoubleNode<T> first;
+    private DoubleNode<T> last;
+    private int numberOfElements;
 
     public DoubleLinkedList() {
-        first = null;
-        last = null;
-        numberOfElements = 0;
+        this.first = null;
+        this.last = null;
+        this.numberOfElements = 0;
     }
 
     public boolean isEmpty(){

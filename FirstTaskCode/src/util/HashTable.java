@@ -3,7 +3,7 @@ package util;
 import customExceptions.HashIsEmptyException;
 import customExceptions.NonExistentKeyException;
 
-public class HashTable<K ,V extends Comparable<V>> {
+public class HashTable<K extends Comparable<K>,V extends Comparable<V>> {
 
 	public final int HASH_SIZE = 10;
 	private HashNode<K, V>[] hashList;
@@ -45,49 +45,58 @@ public class HashTable<K ,V extends Comparable<V>> {
 		}
 	}
 
-	public HashNode<K, V> searchElement(K key, V value) throws HashIsEmptyException, NonExistentKeyException{
-		
+	public HashNode<K, V> searchElement(K key) throws HashIsEmptyException, NonExistentKeyException {
 		int index = hashFunction(key);
-
-		if(isEmpty() == true){
-			throw new HashIsEmptyException("Gracias por: ");
+		if(isEmpty()){
+			throw new HashIsEmptyException("The hash table is empty");
 		}
 		else{
-			if(hashList[index]== null) {
-			throw new NonExistentKeyException("the object whit the key: "+ key + " non Exist" );
+			if(hashList[index] == null){
+				throw new NonExistentKeyException("The object with the key provided doesn't exist");
 			}
-			else if(hashList[index].getNext() == null && hashList[index].getValue().compareTo(value) == 0) {
+			else if(hashList[index].getKey().compareTo(key) == 0){
 				return hashList[index];
 			}
-			else if(hashList[index].getNext() != null && hashList[index].getValue().compareTo(value) == 0) {
-				return hashList[index];
-			}
-			else {
-				return hashList[index].getObjet(value);
+			else{
+				return hashList[index].getObject(key);
 			}
 		}
 	}
 
 	public void deleteElement(K key) throws HashIsEmptyException, NonExistentKeyException {
-		
 		int index = hashFunction(key);
-		
 		if(isEmpty() == true) {
-			throw new HashIsEmptyException("");
+			throw new HashIsEmptyException("The hash table is empty");
 		}
-		else {
-			if(hashList[index] == null) {
-				throw new NonExistentKeyException("");
+		else{
+			if(hashList[index] == null){
+				throw new NonExistentKeyException("The object with the key provided doesn't exist");
 			}
-			else {
+			else{
 				if(hashList[index].getNext() == null) {
 					hashList[index] = null;
 					size--; 
 				}
-				else {
-					hashList[index].removeLast(); 
+				else{
+					hashList[index].removeElement(key);
 				}
 			}
 		}	
+	}
+
+	public String print(){
+
+		String msg = "";
+		for(int i = 0; i < hashList.length; i++){
+			if(hashList[i] != null){
+				if(hashList[i].getNext() == null){
+					msg += hashList[i].getKey().toString();
+				}
+				else{
+					msg += hashList[i].print();
+				}
+			}
+		}
+		return msg;
 	}
 }

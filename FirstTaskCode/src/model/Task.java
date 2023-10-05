@@ -1,5 +1,6 @@
 package model;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Task implements Comparable<Task>{
@@ -40,6 +41,12 @@ public class Task implements Comparable<Task>{
         this.limitDate = limitDate;
     }
 
+    public String getLimitDateString(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        String stringDate = sdf.format(limitDate.getTime());
+        return stringDate;
+    }
+
     public PriorityLevel getPriorityLevel() {
         return priorityLevel;
     }
@@ -51,5 +58,11 @@ public class Task implements Comparable<Task>{
     @Override
     public int compareTo(Task otherTask) {
         return this.limitDate.compareTo(otherTask.limitDate);
+    }
+
+    @Override
+    public String toString() {
+        return "\nName: " + name + ", Description: " + description + ", Limit Date: " + getLimitDateString() + ", Priority Level: "
+                + priorityLevel;
     }
 }

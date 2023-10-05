@@ -1,60 +1,66 @@
 package util;
 
+import customExceptions.HeapFullException;
+
 public class MinHeap<T extends Comparable<T>> {
     
     public final int MAX_SIZE = 20;
     private T[] heap;
-    private int size;
+    private int currentSize;
 
     @SuppressWarnings("unchecked")
     public MinHeap() {
-        this.size = 0;
+        this.currentSize = 0;
         heap = (T[]) new Comparable[MAX_SIZE];
     }
 
-    public void insert(T element) {
-        heap[++size] = element;
-        int current = size;
+    public void insert(T element) throws HeapFullException {
+        if (currentSize == heap.length - 1) {
+            throw new HeapFullException("The heap is full. Can't add more elements.");
+        }
+        heap[++currentSize] = element;
+        int current = currentSize;
         while (current > 1 && heap[current].compareTo(heap[parent(current)]) < 0) {
-            swap(current, parent(current));
+            switchPlaces(current, parent(current));
             current = parent(current);
         }
     }
+    
 
     private void minHeapify(int pos) {
         int smallest;
         int l = leftChild(pos);
         int r = rightChild(pos);
-        if (l <= size && heap[l].compareTo(heap[pos]) < 0)
+        if (l <= currentSize && heap[l].compareTo(heap[pos]) < 0)
             smallest = l;
         else
             smallest = pos;
-        if (r <= size && heap[r].compareTo(heap[smallest]) < 0)
+        if (r <= currentSize && heap[r].compareTo(heap[smallest]) < 0)
             smallest = r;
         if (smallest != pos) {
-            swap(pos, smallest);
+            switchPlaces(pos, smallest);
             minHeapify(smallest);
         }
     }
 
     public void buildMinHeap() {
-        for (int i = size / 2; i >= 1; i--)
+        for (int i = currentSize / 2; i >= 1; i--)
             minHeapify(i);
     }
 
     public void heapsort() {
-        int tmp = size;
-        for (int i = size; i >= 2; i--) {
-            swap(1, i);
-            size--;
+        int tmp = currentSize;
+        for (int i = currentSize; i >= 2; i--) {
+            switchPlaces(1, i);
+            currentSize--;
             minHeapify(1);
         }
-        size = tmp;
+        currentSize = tmp;
     }
 
     public T remove(int pos) {
         T extracted = heap[pos];
-        heap[pos] = heap[size--];
+        heap[pos] = heap[currentSize--];
         minHeapify(pos);
         return extracted;
     }
@@ -71,15 +77,15 @@ public class MinHeap<T extends Comparable<T>> {
         return (2 * pos) + 1;
     }
 
-    private void swap(int fpos, int spos) {
+    private void switchPlaces(int fpos, int spos) {
         T tmp;
         tmp = heap[fpos];
         heap[fpos] = heap[spos];
         heap[spos] = tmp;
     }
 
-    public int getSize() {
-        return this.size;
+    public int getCurrentSize() {
+        return this.currentSize;
     }
 
     public T get(int pos) {

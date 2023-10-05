@@ -1,5 +1,8 @@
 package util;
 
+import customExceptions.HeapFullException;
+import customExceptions.ObjectNotFoundException;
+
 public class MaxHeap<T extends Comparable<T>>{
     
     public final int MAX_SIZE = 20;
@@ -12,11 +15,14 @@ public class MaxHeap<T extends Comparable<T>>{
         heap = (T[]) new Comparable[MAX_SIZE];
     }
 
-    public void insert(T element) {
+    public void insert(T element) throws HeapFullException {
+        if(size == heap.length - 1) {
+            throw new HeapFullException("The heap is full. Can't add more elements.");
+        }
         heap[++size] = element;
         int current = size;
-        while (current > 1 && heap[current].compareTo(heap[parent(current)]) > 0) {
-            swap(current, parent(current));
+        while(current > 1 && heap[current].compareTo(heap[parent(current)]) > 0) {
+            switchPlaces(current, parent(current));
             current = parent(current);
         }
     }
@@ -25,27 +31,31 @@ public class MaxHeap<T extends Comparable<T>>{
         int largest;
         int l = leftChild(pos);
         int r = rightChild(pos);
-        if (l <= size && heap[l].compareTo(heap[pos]) > 0)
+        if(l <= size && heap[l].compareTo(heap[pos]) > 0){
             largest = l;
-        else
+        }
+        else{
             largest = pos;
-        if (r <= size && heap[r].compareTo(heap[largest]) > 0)
+        }
+        if(r <= size && heap[r].compareTo(heap[largest]) > 0){
             largest = r;
-        if (largest != pos) {
-            swap(pos, largest);
+        }
+        if(largest != pos){
+            switchPlaces(pos, largest);
             maxHeapify(largest);
         }
     }
 
     public void buildMaxHeap() {
-        for (int i = size / 2; i >= 1; i--)
+        for(int i = size / 2; i >= 1; i--){
             maxHeapify(i);
+        }
     }
 
     public void heapsort() {
         int tmp = size;
-        for (int i = size; i >= 2; i--) {
-            swap(1, i);
+        for(int i = size; i >= 2; i--){
+            switchPlaces(1, i);
             size--;
             maxHeapify(1);
         }
@@ -59,6 +69,15 @@ public class MaxHeap<T extends Comparable<T>>{
         return extracted;
     }
 
+    public int getIndexForAnObject(T object) throws ObjectNotFoundException{
+        for(int i = 0; i < heap.length; i++){
+            if(heap[i].equals(object)){
+                return i;
+            }
+        }
+        throw new ObjectNotFoundException("Couldn't find the object");
+    }
+    
     private int parent(int pos) {
         return pos / 2;
     }
@@ -71,7 +90,7 @@ public class MaxHeap<T extends Comparable<T>>{
         return (2 * pos) + 1;
     }
 
-    private void swap(int fpos, int spos) {
+    private void switchPlaces(int fpos, int spos) {
         T tmp;
         tmp = heap[fpos];
         heap[fpos] = heap[spos];
@@ -82,15 +101,11 @@ public class MaxHeap<T extends Comparable<T>>{
         return this.size;
     }
     
-    public T get(int pos) {
+    public T getElement(int pos) {
         return heap[pos];
     }
 
-    public void set(int pos, T element) {
+    public void setElement(int pos, T element) {
         heap[pos] = element;
-    }
-
-    public int getMaxSize(){
-        return MAX_SIZE;
     }
 }

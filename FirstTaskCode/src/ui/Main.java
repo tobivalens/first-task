@@ -1,12 +1,16 @@
 package ui;
 import java.util.Scanner;
+
+import customExceptions.HeapFullException;
 import model.Controller;
 
 public class Main {
     private Scanner sc;
+    private Controller controller;
     
     public Main(){
         sc= new Scanner(System.in);
+        controller = new Controller();
     }
 
     public static void main(String[] args){
@@ -29,10 +33,7 @@ public class Main {
                 break;
             case 2:
                 break;
-            
-         
         }
-
     }
 
     public int showMenuAndGetOption() {
@@ -59,13 +60,24 @@ public class Main {
         System.out.println("Description of the task");
         String description= sc.nextLine();
 
-        System.out.println("Insert the limit date of the task (agregar format)");
+        System.out.println("Insert the limit date of the task (YYYY/MM/DD)");
         String date= sc.nextLine();
 
         System.out.println("Please indicate the type of task ");
-        System.out.println("(1)Priority");
-        System.out.println("(2)Non-Priority");
+        System.out.println("(1) Priority");
+        System.out.println("(2) Non-Priority");
         int state= sc.nextInt();
+
+        System.out.println("Please enter an integer that will be the key for this task");
+        int key= sc.nextInt();
+
+        try {
+            controller.addTask(title, description, date, state, key);
+        } catch (HeapFullException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(controller.showAllTasks());
 
     }
 

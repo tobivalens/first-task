@@ -2,11 +2,15 @@ package model;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-
+import customExceptions.HashIsEmptyException;
+import customExceptions.HeapFullException;
+import customExceptions.NonExistentKeyException;
+import customExceptions.ObjectNotFoundException;
 import util.HashTable;
 import util.Stack;
 import util.Queue;
 import util.MaxPriorityQueue;
+import model.PriorityLevel;
 
 public class Controller {
     
@@ -23,7 +27,7 @@ public class Controller {
         priorityQueueTask = new MaxPriorityQueue<Task>(10);
     }
 
-    public void addTask(String name, String description, String strLimitDate, int priorityLevel, int key){
+    public void addTask(String name, String description, String strLimitDate, int priorityLevel, int key) throws HeapFullException{
 
         String[] parts = strLimitDate.split("/");
         int year = Integer.parseInt(parts[0]);
@@ -40,14 +44,67 @@ public class Controller {
         }
 
         Task newTask = new Task(name, description, limitDate, priority);
-        hashTableTask.insertElement(key, newTask);
 
-    
         if(priority.equals(PriorityLevel.PRIORITY)){
             priorityQueueTask.insert(newTask);
         }
         else if(priority.equals(PriorityLevel.NON_PRIORITY)){
             queueTask.enQueue(newTask);
         }
+        hashTableTask.insertElement(key, newTask);
+    }
+
+    public void modifyTask(int key, String newName, String newDescription, String newStrLimitDate, int newPriorityLevel) throws HashIsEmptyException, NonExistentKeyException, ObjectNotFoundException, HeapFullException{
+
+        Task task = hashTableTask.searchElement(key).getValue();
+        PriorityLevel currentPriority = task.getPriorityLevel();
+
+        String[] parts = newStrLimitDate.split("/");
+        int year = Integer.parseInt(parts[0]);
+        int month = Integer.parseInt(parts[1]);
+        int day = Integer.parseInt(parts[2]);
+        Calendar newLimitDate = new GregorianCalendar(year, month-1, day);
+
+        PriorityLevel newPriority = PriorityLevel.NON_PRIORITY;
+        if(newPriorityLevel == 1){
+            newPriority = PriorityLevel.PRIORITY;
+        }
+        else if(newPriorityLevel == 2){
+            newPriority = PriorityLevel.NON_PRIORITY;
+        }
+
+        task.setName(newName);
+        task.setDescription(newDescription);
+        task.setLimitDate(newLimitDate);
+        task.setPriorityLevel(newPriority);
+
+        if(!currentPriority.equals(newPriority)){
+            if(currentPriority.equals(PriorityLevel.PRIORITY)){
+                int index = priorityQueueTask.getHeap().getIndexForAnObject(task);
+                priorityQueueTask.getHeap().remove(index);
+                queueTask.enQueue(task);
+            }
+            else if(currentPriority.equals(PriorityLevel.NON_PRIORITY)){
+                queueTask.getList().delete(task);
+                priorityQueueTask.insert(task);
+            }
+        }
+    }
+
+    public void deleteTask(int key) throws HashIsEmptyException, NonExistentKeyException, ObjectNotFoundException{
+
+        Task task = hashTableTask.searchElement(key).getValue();
+        if(task.getPriorityLevel().equals(PriorityLevel.PRIORITY)){
+            int index = priorityQueueTask.getHeap().getIndexForAnObject(task);
+            priorityQueueTask.getHeap().remove(index);
+        }
+        else if(task.getPriorityLevel().equals(PriorityLevel.NON_PRIORITY)){
+            queueTask.getList().delete(task);
+        }
+    }
+
+    public String showAllTasks(){
+
+        return hashTableTask.print();
     }
 }

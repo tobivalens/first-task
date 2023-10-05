@@ -37,4 +37,8 @@ public class Queue<T> {
     public boolean isEmpty() {
         return list.isEmpty();
     }
+
+    public DoubleLinkedList<T> getList() {
+        return list;
+    }
 }

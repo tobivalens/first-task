@@ -1,5 +1,8 @@
 package util;
 
+import customExceptions.HeapFullException;
+import customExceptions.PriorityQueueIsEmptyException;
+
 public class MaxPriorityQueue<T extends Comparable<T>> {
 
     private MaxHeap<T> heap;
@@ -8,18 +11,18 @@ public class MaxPriorityQueue<T extends Comparable<T>> {
         heap = new MaxHeap<T>();
     }
 
-    public T extractMax() {
+    public T extractMax() throws PriorityQueueIsEmptyException {
         if (heap.getSize() <= 0)
-            return null;
+            throw new PriorityQueueIsEmptyException("The max priority queue is empty");
         else {
-            T maxVal = heap.get(1);
-            heap.set(1, heap.get(heap.getSize()));
+            T maxVal = heap.getElement(1);
+            heap.setElement(1, heap.getElement(heap.getSize()));
             heap.remove(heap.getSize());
             return maxVal;
         }
     }
 
-    public void insert(T element) {
+    public void insert(T element) throws HeapFullException {
         heap.insert(element);
     }
 
@@ -27,10 +30,14 @@ public class MaxPriorityQueue<T extends Comparable<T>> {
         return heap.getSize() == 0;
     }
 
-    public T maximum() {
+    public T maximum() throws PriorityQueueIsEmptyException {
         if (heap.getSize() <= 0)
-            return null;
+            throw new PriorityQueueIsEmptyException("Priority queue is empty");
         else
-            return heap.get(1);
+            return heap.getElement(1);
+    }
+
+    public MaxHeap<T> getHeap() {
+        return heap;
     }
 }
