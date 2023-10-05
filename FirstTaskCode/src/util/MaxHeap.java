@@ -71,8 +71,10 @@ public class MaxHeap<T extends Comparable<T>>{
 
     public int getIndexForAnObject(T object) throws ObjectNotFoundException{
         for(int i = 0; i < heap.length; i++){
-            if(heap[i].equals(object)){
-                return i;
+            if(heap[i] != null){
+                if(heap[i].equals(object)){
+                    return i;
+                }
             }
         }
         throw new ObjectNotFoundException("Couldn't find the object");
@@ -107,5 +109,13 @@ public class MaxHeap<T extends Comparable<T>>{
 
     public void setElement(int pos, T element) {
         heap[pos] = element;
+    }
+
+    public int getMAX_SIZE() {
+        return MAX_SIZE;
+    }
+
+    public T[] getHeap() {
+        return heap;
     }
 }

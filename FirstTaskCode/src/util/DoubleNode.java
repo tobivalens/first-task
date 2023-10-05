@@ -1,6 +1,6 @@
 package util;
 
-class DoubleNode<T> {
+public class DoubleNode<T> {
 
     private T value;
     private DoubleNode<T> next;
@@ -37,6 +37,6 @@ class DoubleNode<T> {
     }
 
     public String toString(){
-        return ("Content: " + value);
+        return value.toString();
     }
 }

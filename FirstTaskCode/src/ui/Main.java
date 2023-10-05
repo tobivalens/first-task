@@ -5,6 +5,8 @@ import customExceptions.HashIsEmptyException;
 import customExceptions.HeapFullException;
 import customExceptions.NonExistentKeyException;
 import customExceptions.ObjectNotFoundException;
+import customExceptions.PriorityQueueIsEmptyException;
+import customExceptions.QueueIsEmptyException;
 import model.Controller;
 
 public class Main {
@@ -37,6 +39,18 @@ public class Main {
             case 2:
                 modifyTask();
                 break;
+            case 3:
+                deleteTask();
+                break;
+            case 4:
+                showAllTasks();
+                break;
+            case 5:
+                showPrioritaryTasks();
+                break;
+            case 6:
+                showNonPrioritaryTasks();
+                break;
         }
     }
 
@@ -46,7 +60,7 @@ public class Main {
                 "(1) Add Task\n" +
                 "(2) Modify Task\n" +
                 "(3) Delete Task\n" +
-                "(4) Display list of Tasks\n" +
+                "(4) Show list of all Tasks\n" +
                 "(5) Undo an Action\n" +
                 "(0) Exit\n"
         );
@@ -103,12 +117,96 @@ public class Main {
         System.out.println("(1) Priority");
         System.out.println("(2) Non-Priority");
         int state= sc.nextInt();
-
+        
         try {
             controller.modifyTask(key, title, description, date, state);
-        } catch (HashIsEmptyException | NonExistentKeyException | ObjectNotFoundException | HeapFullException e) {
+        } catch (HashIsEmptyException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (NonExistentKeyException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ObjectNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (HeapFullException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        System.out.println(controller.showAllTasks());
+    }
+
+    public void showAllTasks(){
+        System.out.println(controller.showAllTasks());
+    }
+
+    private void deleteTask(){
+
+        System.out.println("Please enter the key of the task you'd like to delete");
+        int key= sc.nextInt();
+
+        try {
+            controller.deleteTask(key);
+        } catch (HashIsEmptyException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (NonExistentKeyException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ObjectNotFoundException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         System.out.println(controller.showAllTasks());
+    }
+
+    public void showPrioritaryTasks(){
+        System.out.println(controller.showPrioritaryTasks());
+    }
+
+    public void showNonPrioritaryTasks(){
+        System.out.println(controller.showNonPrioritaryTasks());
+    }
+
+    public void managePriorityTask(){
+
+        try {
+            if(controller.showFirstPrioritaryTask().equals("") == false){
+                System.out.println("This is the priority task with the nearest due date");
+                System.out.println(controller.showFirstPrioritaryTask());
+
+                System.out.println("Would you like to mark this task as completed? \n(1) Yes \n(2) No\n");
+                int option = sc.nextInt();
+
+                if(option == 1){
+                    controller.managePriorityTask(){
+                        
+                    }
+                }
+            }
+            else{
+                System.out.println("There aren't any pending prioritary tasks to manage");
+            }
+        } catch (PriorityQueueIsEmptyException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void manageNonPriorityTask(){
+        
+        try {
+            if(controller.showFirstNonPrioritaryTask().equals("") == false){
+                    System.out.println("This is the first non priority task registered");
+                    System.out.println(controller.showFirstNonPrioritaryTask());
+                }
+                else{
+                    System.out.println("There aren't any pending non prioritary tasks to manage");
+                }
+        } catch (QueueIsEmptyException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }

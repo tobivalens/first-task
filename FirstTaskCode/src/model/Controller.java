@@ -6,11 +6,14 @@ import customExceptions.HashIsEmptyException;
 import customExceptions.HeapFullException;
 import customExceptions.NonExistentKeyException;
 import customExceptions.ObjectNotFoundException;
+import customExceptions.PriorityQueueIsEmptyException;
+import customExceptions.QueueIsEmptyException;
+import util.HashNode;
+import util.HashNodeStatus;
 import util.HashTable;
 import util.Stack;
 import util.Queue;
 import util.MaxPriorityQueue;
-import model.PriorityLevel;
 
 public class Controller {
     
@@ -43,7 +46,7 @@ public class Controller {
             priority = PriorityLevel.NON_PRIORITY;
         }
 
-        Task newTask = new Task(name, description, limitDate, priority);
+        Task newTask = new Task(name, description, key, limitDate, priority);
 
         if(priority.equals(PriorityLevel.PRIORITY)){
             priorityQueueTask.insert(newTask);
@@ -107,5 +110,39 @@ public class Controller {
     public String showAllTasks(){
 
         return hashTableTask.print();
+    }
+
+    public String showPrioritaryTasks(){
+
+        return priorityQueueTask.printHeap();
+    }
+
+    public String showNonPrioritaryTasks(){
+
+        return queueTask.getList().toString();
+    }
+
+    public String showFirstPrioritaryTask() throws PriorityQueueIsEmptyException{
+
+        return priorityQueueTask.maximum().toString();
+    }
+
+    public String showFirstNonPrioritaryTask() throws QueueIsEmptyException{
+
+        return queueTask.front().toString();
+    }
+
+    public void managePriorityTask() throws PriorityQueueIsEmptyException, HashIsEmptyException, NonExistentKeyException{
+
+        Task currentTask = priorityQueueTask.extractMax();
+        int key = currentTask.getKey();
+
+        HashNode hashNode = hashTableTask.searchElement(key);
+        hashNode.setStatus(HashNodeStatus.DELETED);
+    }
+
+    public void manageNonPriorityTask() throws QueueIsEmptyException{
+        
+        Task currentTask = queueTask.front().getValue();
     }
 }

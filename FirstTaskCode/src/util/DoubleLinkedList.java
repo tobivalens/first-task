@@ -104,10 +104,11 @@ public class DoubleLinkedList<T> {
     public T deleteLast() {
         if (last != null) {
             T deletedValue = last.getValue();
-            if (first == last) {
+            if(first == last){
                 first = null;
                 last = null;
-            } else {
+            }
+            else{
                 last = last.getPrevious();
                 last.setNext(null);
             }

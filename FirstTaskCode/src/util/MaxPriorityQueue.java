@@ -40,4 +40,14 @@ public class MaxPriorityQueue<T extends Comparable<T>> {
     public MaxHeap<T> getHeap() {
         return heap;
     }
+
+    public String printHeap(){
+        String msg = "";
+        for(int i = 0; i < heap.getHeap().length; i++){
+            if(heap.getHeap()[i] != null){
+                msg += heap.getHeap()[i].toString();
+            }
+        }
+        return msg;
+    }
 }
