@@ -8,6 +8,7 @@ import customExceptions.NonExistentKeyException;
 import customExceptions.ObjectNotFoundException;
 import customExceptions.PriorityQueueIsEmptyException;
 import customExceptions.QueueIsEmptyException;
+import customExceptions.StackIsEmptyException;
 import util.HashNode;
 import util.HashNodeStatus;
 import util.HashTable;
@@ -18,14 +19,14 @@ import util.MaxPriorityQueue;
 public class Controller {
     
     private HashTable<Integer, Task> hashTableTask;
-    private Stack<Task> actions;
+    private Stack<Action> actions;
     private Queue<Task> queueTask;
     private MaxPriorityQueue<Task> priorityQueueTask;
 
     public Controller (){
 
         hashTableTask = new HashTable<Integer, Task>();
-        actions = new Stack<Task>();
+        actions = new Stack<Action>();
         queueTask = new Queue<Task>();
         priorityQueueTask = new MaxPriorityQueue<Task>(10);
     }
@@ -55,6 +56,7 @@ public class Controller {
             queueTask.enQueue(newTask);
         }
         hashTableTask.insertElement(key, newTask);
+        Action lastAction = new Action(ActionType.ADD, newTask);
     }
 
     public void modifyTask(int key, String newName, String newDescription, String newStrLimitDate, int newPriorityLevel) throws HashIsEmptyException, NonExistentKeyException, ObjectNotFoundException, HeapFullException{
@@ -92,6 +94,7 @@ public class Controller {
                 priorityQueueTask.insert(task);
             }
         }
+        Action lastAction = new Action(ActionType.ADD, task);
     }
 
     public void deleteTask(int key) throws HashIsEmptyException, NonExistentKeyException, ObjectNotFoundException{
@@ -141,8 +144,19 @@ public class Controller {
         hashNode.setStatus(HashNodeStatus.DELETED);
     }
 
-    public void manageNonPriorityTask() throws QueueIsEmptyException{
+    public void manageNonPriorityTask() throws QueueIsEmptyException, HashIsEmptyException, NonExistentKeyException{
         
         Task currentTask = queueTask.front().getValue();
+        int key = currentTask.getKey();
+
+        HashNode hashNode = hashTableTask.searchElement(key);
+        hashNode.setStatus(HashNodeStatus.DELETED);
+        queueTask.deQueue();
+    }
+
+    public void revertLastAction() throws StackIsEmptyException{
+
+        Action lastAction = actions.top().getValue();
+
     }
 }

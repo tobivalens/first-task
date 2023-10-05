@@ -51,6 +51,15 @@ public class Main {
             case 6:
                 showNonPrioritaryTasks();
                 break;
+            case 7:
+                managePriorityTask();
+                break;
+            case 8:
+                manageNonPriorityTask();
+                break;
+            case 9:
+                manageNonPriorityTask();
+                break;
         }
     }
 
@@ -61,7 +70,11 @@ public class Main {
                 "(2) Modify Task\n" +
                 "(3) Delete Task\n" +
                 "(4) Show list of all Tasks\n" +
-                "(5) Undo an Action\n" +
+                "(5) Show list of priority tasks\n" +
+                "(6) Show list of non priority tasks\n" +
+                "(7) Manage priority task\n" +
+                "(8) Manage non priority task\n" +
+                "(9) Undo last action\n" +
                 "(0) Exit\n"
         );
         input = sc.nextInt();
@@ -180,8 +193,14 @@ public class Main {
                 int option = sc.nextInt();
 
                 if(option == 1){
-                    controller.managePriorityTask(){
-                        
+                    try {
+                        controller.managePriorityTask();
+                    } catch (HashIsEmptyException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (NonExistentKeyException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
                     }
                 }
             }
@@ -196,7 +215,7 @@ public class Main {
 
     public void manageNonPriorityTask(){
         
-        try {
+        try{
             if(controller.showFirstNonPrioritaryTask().equals("") == false){
                     System.out.println("This is the first non priority task registered");
                     System.out.println(controller.showFirstNonPrioritaryTask());
@@ -204,7 +223,8 @@ public class Main {
                 else{
                     System.out.println("There aren't any pending non prioritary tasks to manage");
                 }
-        } catch (QueueIsEmptyException e) {
+        }
+        catch (QueueIsEmptyException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
