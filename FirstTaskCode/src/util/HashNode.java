@@ -71,6 +71,20 @@ public class HashNode<K extends Comparable<K>,V extends Comparable<V>> {
 			}
 		}
 	}
+
+	public boolean restoreElement(K key){
+
+		if(next.getKey().equals(key)){
+			next.setStatus(HashNodeStatus.ACTIVE);
+			return true;
+		}
+		else{
+			if(next.getNext() != null){
+				return next.getNext().restoreElement(key);
+			}
+		}
+		return false;
+	}
 	
 	public HashNode<K, V> getObject(K key) throws NonExistentKeyException{
 		if(next != null){

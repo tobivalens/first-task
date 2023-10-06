@@ -7,6 +7,7 @@ import customExceptions.NonExistentKeyException;
 import customExceptions.ObjectNotFoundException;
 import customExceptions.PriorityQueueIsEmptyException;
 import customExceptions.QueueIsEmptyException;
+import customExceptions.StackIsEmptyException;
 import model.Controller;
 
 public class Main {
@@ -58,7 +59,7 @@ public class Main {
                 manageNonPriorityTask();
                 break;
             case 9:
-                manageNonPriorityTask();
+                revertLastAction();
                 break;
         }
     }
@@ -104,7 +105,7 @@ public class Main {
         try {
             controller.addTask(title, description, date, state, key);
         } catch (HeapFullException e) {
-            e.printStackTrace();
+            e.getMessage();
         }
 
         System.out.println(controller.showAllTasks());
@@ -134,17 +135,15 @@ public class Main {
         try {
             controller.modifyTask(key, title, description, date, state);
         } catch (HashIsEmptyException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.getMessage();
         } catch (NonExistentKeyException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.getMessage();
         } catch (ObjectNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.getMessage();
         } catch (HeapFullException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.getMessage();
+        } catch (CloneNotSupportedException e) {
+            e.getMessage();
         }
 
         System.out.println(controller.showAllTasks());
@@ -162,14 +161,11 @@ public class Main {
         try {
             controller.deleteTask(key);
         } catch (HashIsEmptyException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.getMessage();
         } catch (NonExistentKeyException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.getMessage();
         } catch (ObjectNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.getMessage();
         }
         System.out.println(controller.showAllTasks());
     }
@@ -196,11 +192,9 @@ public class Main {
                     try {
                         controller.managePriorityTask();
                     } catch (HashIsEmptyException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        e.getMessage();
                     } catch (NonExistentKeyException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        e.getMessage();
                     }
                 }
             }
@@ -208,8 +202,7 @@ public class Main {
                 System.out.println("There aren't any pending prioritary tasks to manage");
             }
         } catch (PriorityQueueIsEmptyException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.getMessage();
         }
     }
 
@@ -225,8 +218,23 @@ public class Main {
                 }
         }
         catch (QueueIsEmptyException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.getMessage();
+        }
+    }
+
+    public void revertLastAction(){
+        try {
+            controller.revertLastAction();
+        } catch (StackIsEmptyException e) {
+            e.getMessage();
+        } catch (HashIsEmptyException e) {
+            e.getMessage();
+        } catch (NonExistentKeyException e) {
+            e.getMessage();
+        } catch (ObjectNotFoundException e) {
+            e.getMessage();
+        } catch (HeapFullException e) {
+            e.getMessage();
         }
     }
 }

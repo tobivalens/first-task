@@ -84,6 +84,28 @@ public class HashTable<K extends Comparable<K>,V extends Comparable<V>> {
 		}	
 	}
 
+	public void restoreElement(K key, V value) throws HashIsEmptyException, NonExistentKeyException {
+		int index = hashFunction(key);
+		if(hashList[index] == null){
+			hashList[index] = new HashNode<K, V>(key, value);
+		}
+		else{
+			if(hashList[index].getNext() == null) {
+				if(hashList[index].getKey().equals(key)){
+					hashList[index].setStatus(HashNodeStatus.ACTIVE);
+				}
+				else{
+					hashList[index].add(new HashNode<K,V>(key, value));
+				}
+			}
+			else{
+				if(hashList[index].restoreElement(key) == false){
+					hashList[index].add(new HashNode<K,V>(key, value));
+				}
+			}
+		}	
+	}
+
 	public String print(){
 
 		String msg = "";
