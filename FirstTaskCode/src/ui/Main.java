@@ -41,24 +41,21 @@ public class Main {
                 modifyTask();
                 break;
             case 3:
-                deleteTask();
-                break;
-            case 4:
                 showAllTasks();
                 break;
-            case 5:
+            case 4:
                 showPrioritaryTasks();
                 break;
-            case 6:
+            case 5:
                 showNonPrioritaryTasks();
                 break;
-            case 7:
+            case 6:
                 managePriorityTask();
                 break;
-            case 8:
+            case 7:
                 manageNonPriorityTask();
                 break;
-            case 9:
+            case 8:
                 revertLastAction();
                 break;
         }
@@ -66,16 +63,15 @@ public class Main {
 
     public int showMenuAndGetOption() {
         int input;
-        System.out.println("\n\n¡Welcome to the organization app!\n"+
+        System.out.println("\nWelcome to the organization app!\n"+
                 "(1) Add Task\n" +
                 "(2) Modify Task\n" +
-                "(3) Delete Task\n" +
-                "(4) Show list of all Tasks\n" +
-                "(5) Show list of priority tasks\n" +
-                "(6) Show list of non priority tasks\n" +
-                "(7) Manage priority task\n" +
-                "(8) Manage non priority task\n" +
-                "(9) Undo last action\n" +
+                "(3) Show list of all Tasks\n" +
+                "(4) Show list of priority tasks\n" +
+                "(5) Show list of non priority tasks\n" +
+                "(6) Manage priority task\n" +
+                "(7) Manage non priority task\n" +
+                "(8) Undo last action\n" +
                 "(0) Exit\n"
         );
         input = sc.nextInt();
@@ -105,7 +101,7 @@ public class Main {
         try {
             controller.addTask(title, description, date, state, key);
         } catch (HeapFullException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         }
 
         System.out.println(controller.showAllTasks());
@@ -135,38 +131,21 @@ public class Main {
         try {
             controller.modifyTask(key, title, description, date, state);
         } catch (HashIsEmptyException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } catch (NonExistentKeyException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } catch (ObjectNotFoundException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } catch (HeapFullException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } catch (CloneNotSupportedException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         }
 
         System.out.println(controller.showAllTasks());
     }
 
     public void showAllTasks(){
-        System.out.println(controller.showAllTasks());
-    }
-
-    private void deleteTask(){
-
-        System.out.println("Please enter the key of the task you'd like to delete");
-        int key= sc.nextInt();
-
-        try {
-            controller.deleteTask(key);
-        } catch (HashIsEmptyException e) {
-            e.getMessage();
-        } catch (NonExistentKeyException e) {
-            e.getMessage();
-        } catch (ObjectNotFoundException e) {
-            e.getMessage();
-        }
         System.out.println(controller.showAllTasks());
     }
 
@@ -189,20 +168,24 @@ public class Main {
                 int option = sc.nextInt();
 
                 if(option == 1){
+                    
                     try {
                         controller.managePriorityTask();
-                    } catch (HashIsEmptyException e) {
-                        e.getMessage();
-                    } catch (NonExistentKeyException e) {
-                        e.getMessage();
+                    } catch (ObjectNotFoundException e) {
+                        System.out.println(e.getMessage());
                     }
+                    
                 }
             }
             else{
                 System.out.println("There aren't any pending prioritary tasks to manage");
             }
         } catch (PriorityQueueIsEmptyException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
+        } catch (HashIsEmptyException e) {
+            System.out.println(e.getMessage());
+        } catch (NonExistentKeyException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -212,13 +195,26 @@ public class Main {
             if(controller.showFirstNonPrioritaryTask().equals("") == false){
                     System.out.println("This is the first non priority task registered");
                     System.out.println(controller.showFirstNonPrioritaryTask());
+
+                    System.out.println("Would you like to mark this task as completed? \n(1) Yes \n(2) No\n");
+                    int option = sc.nextInt();
+
+                    if(option == 1){
+                        try {
+                            controller.manageNonPriorityTask();
+                        } catch (HashIsEmptyException e) {
+                            System.out.println(e.getMessage());
+                        } catch (NonExistentKeyException e) {
+                            System.out.println(e.getMessage());
+                        }
+                    }
                 }
                 else{
                     System.out.println("There aren't any pending non prioritary tasks to manage");
                 }
         }
         catch (QueueIsEmptyException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         }
     }
 
@@ -226,15 +222,15 @@ public class Main {
         try {
             controller.revertLastAction();
         } catch (StackIsEmptyException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } catch (HashIsEmptyException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } catch (NonExistentKeyException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } catch (ObjectNotFoundException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } catch (HeapFullException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         }
     }
 }

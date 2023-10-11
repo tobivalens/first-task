@@ -5,7 +5,7 @@ import customExceptions.NonExistentKeyException;
 
 public class HashTable<K extends Comparable<K>,V extends Comparable<V>> {
 
-	public final int HASH_SIZE = 10;
+	public final int HASH_SIZE = 1000;
 	private HashNode<K, V>[] hashList;
 	private int size; 
 	
@@ -55,7 +55,12 @@ public class HashTable<K extends Comparable<K>,V extends Comparable<V>> {
 				throw new NonExistentKeyException("The object with the key provided doesn't exist");
 			}
 			else if(hashList[index].getKey().compareTo(key) == 0){
-				return hashList[index];
+				if(hashList[index].getStatus().equals(HashNodeStatus.ACTIVE) == true){
+					return hashList[index];
+				}
+				else{
+					throw new NonExistentKeyException("The object with the key provided doesn't exist");
+				}
 			}
 			else{
 				return hashList[index].getObject(key);

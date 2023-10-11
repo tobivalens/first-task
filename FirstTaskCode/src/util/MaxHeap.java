@@ -5,7 +5,7 @@ import customExceptions.ObjectNotFoundException;
 
 public class MaxHeap<T extends Comparable<T>>{
     
-    public final int MAX_SIZE = 20;
+    public final int MAX_SIZE = 200;
     private T[] heap;
     private int size;
 
@@ -29,16 +29,16 @@ public class MaxHeap<T extends Comparable<T>>{
 
     private void maxHeapify(int pos) {
         int largest;
-        int l = leftChild(pos);
-        int r = rightChild(pos);
-        if(l <= size && heap[l].compareTo(heap[pos]) > 0){
-            largest = l;
+        int left = leftChild(pos);
+        int right = rightChild(pos);
+        if(left <= size && heap[left].compareTo(heap[pos]) > 0){
+            largest = left;
         }
         else{
             largest = pos;
         }
-        if(r <= size && heap[r].compareTo(heap[largest]) > 0){
-            largest = r;
+        if(right <= size && heap[right].compareTo(heap[largest]) > 0){
+            largest = right;
         }
         if(largest != pos){
             switchPlaces(pos, largest);

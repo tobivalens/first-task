@@ -7,7 +7,7 @@ public class MaxPriorityQueue<T extends Comparable<T>> {
 
     private MaxHeap<T> heap;
 
-    public MaxPriorityQueue(int maxsize) {
+    public MaxPriorityQueue() {
         heap = new MaxHeap<T>();
     }
 

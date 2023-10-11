@@ -89,14 +89,19 @@ public class HashNode<K extends Comparable<K>,V extends Comparable<V>> {
 	public HashNode<K, V> getObject(K key) throws NonExistentKeyException{
 		if(next != null){
 			if(next.key.compareTo(key) == 0){
-				return next;
+				if(next.getStatus().equals(HashNodeStatus.ACTIVE) == true){
+					return next;
+				}
+				else{
+					throw new NonExistentKeyException("The object with the key provided doesn't exist");
+				}
 			}
 			else{
 				return next.getObject(key);
 			}
 		}
 		else {
-			throw new NonExistentKeyException("");
+			throw new NonExistentKeyException("The object with the key provided doesn't exist");
 		}
 	}
 

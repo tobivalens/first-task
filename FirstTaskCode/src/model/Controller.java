@@ -28,7 +28,7 @@ public class Controller {
         hashTableTask = new HashTable<Integer, Task>();
         actions = new Stack<Action>();
         queueTask = new Queue<Task>();
-        priorityQueueTask = new MaxPriorityQueue<Task>(10);
+        priorityQueueTask = new MaxPriorityQueue<Task>();
     }
 
     public void addTask(String name, String description, String strLimitDate, int priorityLevel, int key) throws HeapFullException{
@@ -58,6 +58,9 @@ public class Controller {
         hashTableTask.insertElement(key, newTask);
         Action lastAction = new Action(ActionType.ADD, newTask);
         actions.push(lastAction);
+
+        priorityQueueTask.getHeap().buildMaxHeap();
+        priorityQueueTask.getHeap().heapsort();
     }
 
     public void modifyTask(int key, String newName, String newDescription, String newStrLimitDate, int newPriorityLevel) throws HashIsEmptyException, NonExistentKeyException, ObjectNotFoundException, HeapFullException, CloneNotSupportedException{
@@ -101,21 +104,9 @@ public class Controller {
         }
         Action lastAction = new Action(ActionType.MODIFY, task, originalTask);
         actions.push(lastAction);
-    }
 
-    public void deleteTask(int key) throws HashIsEmptyException, NonExistentKeyException, ObjectNotFoundException{
-
-        Task task = hashTableTask.searchElement(key).getValue();
-        if(task.getPriorityLevel().equals(PriorityLevel.PRIORITY)){
-            int index = priorityQueueTask.getHeap().getIndexForAnObject(task);
-            priorityQueueTask.getHeap().remove(index);
-        }
-        else if(task.getPriorityLevel().equals(PriorityLevel.NON_PRIORITY)){
-            queueTask.getList().delete(task);
-        }
-        hashTableTask.deleteElement(key);
-        Action lastAction = new Action(ActionType.DELETE, task);
-        actions.push(lastAction);
+        priorityQueueTask.getHeap().buildMaxHeap();
+        priorityQueueTask.getHeap().heapsort();
     }
 
     public String showAllTasks(){
@@ -143,13 +134,17 @@ public class Controller {
         return queueTask.front().toString();
     }
 
-    public void managePriorityTask() throws PriorityQueueIsEmptyException, HashIsEmptyException, NonExistentKeyException{
+    public void managePriorityTask() throws PriorityQueueIsEmptyException, HashIsEmptyException, NonExistentKeyException, ObjectNotFoundException{
 
         Task currentTask = priorityQueueTask.extractMax();
         int key = currentTask.getKey();
-
+        
         HashNode hashNode = hashTableTask.searchElement(key);
         hashNode.setStatus(HashNodeStatus.DELETED);
+        
+        int index = priorityQueueTask.getHeap().getIndexForAnObject(currentTask);
+        priorityQueueTask.getHeap().remove(index);
+        actions.push(new Action(ActionType.COMPLETE, currentTask));
     }
 
     public void manageNonPriorityTask() throws QueueIsEmptyException, HashIsEmptyException, NonExistentKeyException{
@@ -160,6 +155,7 @@ public class Controller {
         HashNode hashNode = hashTableTask.searchElement(key);
         hashNode.setStatus(HashNodeStatus.DELETED);
         queueTask.deQueue();
+        actions.push(new Action(ActionType.COMPLETE, currentTask));
     }
 
     public void revertLastAction() throws StackIsEmptyException, HashIsEmptyException, NonExistentKeyException, ObjectNotFoundException, HeapFullException{
@@ -169,13 +165,13 @@ public class Controller {
         if(lastAction.getActionType().equals(ActionType.ADD)){
             if(task.getPriorityLevel().equals(PriorityLevel.PRIORITY)){
                 int index = priorityQueueTask.getHeap().getIndexForAnObject(task);
-                priorityQueueTask.getHeap().remove(index);
+                priorityQueueTask.getHeap().remove(index);                
             }
             else if(task.getPriorityLevel().equals(PriorityLevel.NON_PRIORITY)){
                 queueTask.getList().delete(task);
             }
             hashTableTask.deleteElement(task.getKey());
-        }
+        }    
         else if(lastAction.getActionType().equals(ActionType.MODIFY)){
             Task originalTask = lastAction.getOriginalTask();
             task.setName(originalTask.getName());
@@ -183,15 +179,6 @@ public class Controller {
             task.setLimitDate(originalTask.getLimitDate());
             task.setPriorityLevel(originalTask.getPriorityLevel());
 
-        }
-        else if(lastAction.getActionType().equals(ActionType.DELETE)){
-            if(task.getPriorityLevel().equals(PriorityLevel.PRIORITY)){
-                priorityQueueTask.insert(task);
-            }
-            else if(task.getPriorityLevel().equals(PriorityLevel.NON_PRIORITY)){
-                queueTask.enQueue(task);
-            }
-            hashTableTask.restoreElement(task.getKey(), task);
         }
         else{
             if(task.getPriorityLevel().equals(PriorityLevel.PRIORITY)){
@@ -202,5 +189,7 @@ public class Controller {
             }
             hashTableTask.restoreElement(task.getKey(), task);
         }
+        priorityQueueTask.getHeap().buildMaxHeap();
+        priorityQueueTask.getHeap().heapsort();
     }
 }

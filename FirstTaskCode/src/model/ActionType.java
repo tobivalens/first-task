@@ -2,5 +2,5 @@ package model;
 
 public enum ActionType {
 
-    ADD, DELETE, MODIFY, COMPLETE
+    ADD, MODIFY, COMPLETE
 }
