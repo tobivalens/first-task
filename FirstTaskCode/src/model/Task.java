@@ -11,12 +11,12 @@ public class Task implements Comparable<Task>, Cloneable{
     private Calendar limitDate;
     private PriorityLevel priorityLevel;
     
-    public Task(String name, String description, int key, Calendar lim, PriorityLevel x) {
+    public Task(String name, String description, int key, Calendar limitDate, PriorityLevel priorityLevel) {
         this.name = name;
         this.description = description;
         this.key = key;
-        this.limitDate = lim;
-        this.priorityLevel = x;
+        this.limitDate = limitDate;
+        this.priorityLevel = priorityLevel;
     }
 
     public String getName() {

@@ -138,10 +138,7 @@ public class Controller {
 
         int index = heapTask.getIndexForAnObject(currentTask);
 
-        if(index != -1){
-            heapTask.remove(index);
-            actions.push(new Action(ActionType.COMPLETE, currentTask));
-        }
+        actions.push(new Action(ActionType.COMPLETE, currentTask));
     }
 
     public void manageNonPriorityTask() throws QueueIsEmptyException, HashIsEmptyException, NonExistentKeyException{
@@ -188,5 +185,9 @@ public class Controller {
             }
             hashTableTask.restoreElement(task.getKey(), task);
         }
+    }
+
+    public int getHeapSize(){
+        return heapTask.getSize();
     }
 }

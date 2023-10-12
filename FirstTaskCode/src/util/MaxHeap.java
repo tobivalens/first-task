@@ -2,6 +2,7 @@ package util;
 
 import customExceptions.HeapFullException;
 import customExceptions.ObjectNotFoundException;
+import customExceptions.PriorityQueueIsEmptyException;
 import customExceptions.QueueIsEmptyException;
 
 public class MaxHeap<T extends Comparable<T>>{
@@ -21,11 +22,10 @@ public class MaxHeap<T extends Comparable<T>>{
         if(l < size && heap[l].compareTo(heap[i]) > 0){
             largest = l;
         }
-        else {
+        else{
             largest = i;
         }
-        if
-        (r < size && heap[r].compareTo(heap[largest]) > 0){
+        if(r < size && heap[r].compareTo(heap[largest]) > 0){
             largest = r;
         }
         if(largest != i){
@@ -36,15 +36,6 @@ public class MaxHeap<T extends Comparable<T>>{
 
     public boolean isEmpty() {
         return heap[0] == null;
-    }
-
-    public int searchTaskIndex(T element){
-        for(int i = 0; i < size; i++){
-            if(heap[i] == element){
-                return i;
-            }
-        }
-        return -1;
     }
 
     public T[] getHeap(){
@@ -59,25 +50,26 @@ public class MaxHeap<T extends Comparable<T>>{
         this.size = heapSize;
     }
 
-    public void insert(T element) throws HeapFullException{
-        if(size > heap.length){
+    public void insert(T element) throws HeapFullException {
+        if (size >= heap.length) {
             throw new HeapFullException("The heap is full");
         }
         heap[size] = element;
         int current = size;
-        while(current > 0 && heap[current].compareTo(heap[parent(current)]) > 0){
+        while (current > 0 && heap[current].compareTo(heap[parent(current)]) > 0) {
             swap(current, parent(current));
             current = parent(current);
         }
-        size++;
-    }
+        this.size++;
+    }    
 
-    public T extractMax() throws QueueIsEmptyException {
+    public T extractMax() throws PriorityQueueIsEmptyException {
         if(size < 1){
-            throw new QueueIsEmptyException("The heap is empty");
+            throw new PriorityQueueIsEmptyException("The heap is empty");
         }
         T max = getMax();
         heap[0] = heap[size - 1];
+        heap[size] = null;
         size--;
         maxHeapify(0);
         return max;
@@ -110,11 +102,17 @@ public class MaxHeap<T extends Comparable<T>>{
             throw new ObjectNotFoundException("The index is not valid");
         }
         else{
-            heap[index] = heap[size--];
-            maxHeapify(index);
+            if(size == 1){
+                heap[0] = null;
+            }
+            else{
+                heap[index] = heap[size-1];
+                heap[--size] = null;
+                maxHeapify(index);
+            }
         }
     }
-
+    
     public int getIndexForAnObject(T element){
         for(int i = 0; i < heap.length; i++){
             if(heap[i] != null){

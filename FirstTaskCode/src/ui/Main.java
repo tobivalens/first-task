@@ -20,7 +20,7 @@ public class Main {
     }
 
     public static void main(String[] args){
-        
+       
         Main main = new Main();
         int option= -1;
         do {
@@ -28,11 +28,8 @@ public class Main {
             main.answerOption(option);
         }while (option !=0);
     }
-  
-    
 
     public void answerOption(int userOption) {
-       
         switch(userOption) {
             case 0:
                 System.out.println("¡Goodbye!");
@@ -47,25 +44,17 @@ public class Main {
                 showAllTasks();
                 break;
             case 4:
-                showPrioritaryTasks();
-                break;
-            case 5:
-                showNonPrioritaryTasks();
-                break;
-            case 6:
                 managePriorityTask();
                 break;
-            case 7:
+            case 5:
                 manageNonPriorityTask();
                 break;
-            case 8:
+            case 6:
                 revertLastAction();
                 break;
-
             case 9:
-                testCases();
-                break;
-
+            testCases();
+            break;
         }
     }
 
@@ -75,11 +64,9 @@ public class Main {
                 "(1) Add Task\n" +
                 "(2) Modify Task\n" +
                 "(3) Show list of all Tasks\n" +
-                "(4) Show list of priority tasks\n" +
-                "(5) Show list of non priority tasks\n" +
-                "(6) Manage priority task\n" +
-                "(7) Manage non priority task\n" +
-                "(8) Undo last action\n" +
+                "(4) Manage priority task\n" +
+                "(5) Manage non priority task\n" +
+                "(6) Undo last action\n" +
                 "(0) Exit\n"
         );
         input = sc.nextInt();
@@ -89,21 +76,21 @@ public class Main {
 
     public void addTask(){
         System.out.println("Please enter the information of the new task");
-        System.out.println("Title of the task ");
+        System.out.println("Title of the task");
         String title= sc.nextLine();
 
-        System.out.println("Description of the task");
+        System.out.println("Brief description of the task");
         String description= sc.nextLine();
 
         System.out.println("Insert the limit date of the task (YYYY/MM/DD)");
         String date= sc.nextLine();
 
-        System.out.println("Please indicate the type of task ");
+        System.out.println("Please indicate the type of priority of the task");
         System.out.println("(1) Priority");
         System.out.println("(2) Non-Priority");
         int state= sc.nextInt();
 
-        System.out.println("Please enter an integer that will be the key for this task");
+        System.out.println("Please enter an integer that will be the key for this task. Each task must have a different key");
         int key= sc.nextInt();
 
         try {
@@ -111,8 +98,6 @@ public class Main {
         } catch (HeapFullException e) {
             System.out.println(e.getMessage());
         }
-
-        System.out.println(controller.showAllTasks());
     }
 
     public void modifyTask(){
@@ -128,7 +113,7 @@ public class Main {
         System.out.println("New description of the task");
         String description= sc.nextLine();
 
-        System.out.println("Insert the new limit date of the task (YYYY/MM/DD)");
+        System.out.println("Insert the new limit date of the task (Strictly in format: YYYY/MM/DD)");
         String date= sc.nextLine();
 
         System.out.println("Please indicate the new type of task ");
@@ -149,42 +134,38 @@ public class Main {
         } catch (CloneNotSupportedException e) {
             System.out.println(e.getMessage());
         }
-
-        System.out.println(controller.showAllTasks());
+        System.out.println("The task was added successfully"); 
     }
 
     public void showAllTasks(){
         System.out.println(controller.showAllTasks());
     }
 
-    public void showPrioritaryTasks(){
-        System.out.println(controller.showPrioritaryTasks());
-    }
-
-    public void showNonPrioritaryTasks(){
-        System.out.println(controller.showNonPrioritaryTasks());
-    }
-
     public void managePriorityTask(){
 
         try {
-            if(controller.showFirstPrioritaryTask().equals("") == false){
-                System.out.println("This is the priority task with the nearest due date");
-                System.out.println(controller.showFirstPrioritaryTask());
+            if(controller.showPrioritaryTasks().equals("") == false){
+                if(controller.getHeapSize() != 0){
+                    System.out.println("This is the priority task with the nearest due date");
+                    System.out.println(controller.showFirstPrioritaryTask());
 
-                System.out.println("Would you like to mark this task as completed? \n(1) Yes \n(2) No\n");
-                int option = sc.nextInt();
+                    System.out.println("Would you like to mark this task as completed? \n(1) Yes \n(2) No\n");
+                    int option = sc.nextInt();
 
-                if(option == 1){
-                    
-                    try {
-                        controller.managePriorityTask();
-                    } catch (ObjectNotFoundException e) {
-                        System.out.println(e.getMessage());
-                    } catch (QueueIsEmptyException e) {
-                        System.out.println(e.getMessage());
+                    if(option == 1){
+                        
+                        try {
+                            controller.managePriorityTask();
+                        } catch (ObjectNotFoundException e) {
+                            System.out.println(e.getMessage());
+                        } catch (QueueIsEmptyException e) {
+                            System.out.println(e.getMessage());
+                        }
+                        
                     }
-                    
+                }
+                else{
+                    System.out.println("There aren't any pending prioritary tasks to manage");
                 }
             }
             else{
@@ -197,12 +178,13 @@ public class Main {
         } catch (NonExistentKeyException e) {
             System.out.println(e.getMessage());
         }
+        System.out.println("The task was successfully completed");
     }
 
     public void manageNonPriorityTask(){
         
         try{
-            if(controller.showFirstNonPrioritaryTask().equals("") == false){
+            if(controller.showNonPrioritaryTasks().equals("") == false){
                     System.out.println("This is the first non priority task registered");
                     System.out.println(controller.showFirstNonPrioritaryTask());
 
@@ -243,7 +225,6 @@ public class Main {
             System.out.println(e.getMessage());
         }
     }
-
     public void testCases(){
         try {
             controller.addTask("name", "null", "2022/11/01", 1, 12);
