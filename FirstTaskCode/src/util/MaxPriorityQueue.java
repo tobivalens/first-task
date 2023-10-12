@@ -1,4 +1,4 @@
-package util;
+/**package util;
 
 import customExceptions.HeapFullException;
 import customExceptions.PriorityQueueIsEmptyException;
@@ -34,7 +34,7 @@ public class MaxPriorityQueue<T extends Comparable<T>> {
         if (heap.getSize() <= 0)
             throw new PriorityQueueIsEmptyException("Priority queue is empty");
         else
-            return heap.getElement(1);
+            return heap.getMax();
     }
 
     public MaxHeap<T> getHeap() {
@@ -50,4 +50,4 @@ public class MaxPriorityQueue<T extends Comparable<T>> {
         }
         return msg;
     }
-}
+}*/

@@ -20,7 +20,7 @@ public class Main {
     }
 
     public static void main(String[] args){
-       
+        
         Main main = new Main();
         int option= -1;
         do {
@@ -28,8 +28,11 @@ public class Main {
             main.answerOption(option);
         }while (option !=0);
     }
+  
+    
 
     public void answerOption(int userOption) {
+       
         switch(userOption) {
             case 0:
                 System.out.println("¡Goodbye!");
@@ -58,6 +61,11 @@ public class Main {
             case 8:
                 revertLastAction();
                 break;
+
+            case 9:
+                testCases();
+                break;
+
         }
     }
 
@@ -233,6 +241,18 @@ public class Main {
             System.out.println(e.getMessage());
         } catch (HeapFullException e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    public void testCases(){
+        try {
+            controller.addTask("name", "null", "2022/11/01", 1, 12);
+            controller.addTask("name2", "null", "2022/11/02", 1, 1);
+            controller.addTask("name3", "null", "2022/11/03", 2, 15);
+            controller.addTask("name4", "null", "2022/11/04", 2, 18);
+        } catch (HeapFullException e) {
+            // TODO Auto-generated catch block
+            e.getMessage();
         }
     }
 }
