@@ -173,6 +173,8 @@ public class Main {
                         controller.managePriorityTask();
                     } catch (ObjectNotFoundException e) {
                         System.out.println(e.getMessage());
+                    } catch (QueueIsEmptyException e) {
+                        System.out.println(e.getMessage());
                     }
                     
                 }

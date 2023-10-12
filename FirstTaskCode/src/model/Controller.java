@@ -12,23 +12,23 @@ import customExceptions.StackIsEmptyException;
 import util.HashNode;
 import util.HashNodeStatus;
 import util.HashTable;
+import util.MaxHeap;
 import util.Stack;
 import util.Queue;
-import util.MaxPriorityQueue;
 
 public class Controller {
     
     private HashTable<Integer, Task> hashTableTask;
     private Stack<Action> actions;
     private Queue<Task> queueTask;
-    private MaxPriorityQueue<Task> priorityQueueTask;
+    private MaxHeap<Task> heapTask;
 
     public Controller (){
 
         hashTableTask = new HashTable<Integer, Task>();
         actions = new Stack<Action>();
         queueTask = new Queue<Task>();
-        priorityQueueTask = new MaxPriorityQueue<Task>();
+        heapTask = new MaxHeap<>(200);
     }
 
     public void addTask(String name, String description, String strLimitDate, int priorityLevel, int key) throws HeapFullException{
@@ -50,7 +50,7 @@ public class Controller {
         Task newTask = new Task(name, description, key, limitDate, priority);
 
         if(priority.equals(PriorityLevel.PRIORITY)){
-            priorityQueueTask.insert(newTask);
+            heapTask.insert(newTask);
         }
         else if(priority.equals(PriorityLevel.NON_PRIORITY)){
             queueTask.enQueue(newTask);
@@ -58,9 +58,6 @@ public class Controller {
         hashTableTask.insertElement(key, newTask);
         Action lastAction = new Action(ActionType.ADD, newTask);
         actions.push(lastAction);
-
-        priorityQueueTask.getHeap().buildMaxHeap();
-        priorityQueueTask.getHeap().heapsort();
     }
 
     public void modifyTask(int key, String newName, String newDescription, String newStrLimitDate, int newPriorityLevel) throws HashIsEmptyException, NonExistentKeyException, ObjectNotFoundException, HeapFullException, CloneNotSupportedException{
@@ -91,22 +88,19 @@ public class Controller {
         task.setLimitDate(newLimitDate);
         task.setPriorityLevel(newPriority);
 
-        if(!currentPriority.equals(newPriority)){
+        if(currentPriority.equals(newPriority) == false){
             if(currentPriority.equals(PriorityLevel.PRIORITY)){
-                int index = priorityQueueTask.getHeap().getIndexForAnObject(task);
-                priorityQueueTask.getHeap().remove(index);
+                int index = heapTask.getIndexForAnObject(task);
+                heapTask.remove(index);
                 queueTask.enQueue(task);
             }
             else if(currentPriority.equals(PriorityLevel.NON_PRIORITY)){
                 queueTask.getList().delete(task);
-                priorityQueueTask.insert(task);
+                heapTask.insert(task);
             }
         }
         Action lastAction = new Action(ActionType.MODIFY, task, originalTask);
         actions.push(lastAction);
-
-        priorityQueueTask.getHeap().buildMaxHeap();
-        priorityQueueTask.getHeap().heapsort();
     }
 
     public String showAllTasks(){
@@ -116,7 +110,7 @@ public class Controller {
 
     public String showPrioritaryTasks(){
 
-        return priorityQueueTask.printHeap();
+        return heapTask.printHeap();
     }
 
     public String showNonPrioritaryTasks(){
@@ -126,7 +120,7 @@ public class Controller {
 
     public String showFirstPrioritaryTask() throws PriorityQueueIsEmptyException{
 
-        return priorityQueueTask.maximum().toString();
+        return heapTask.getMax().toString();
     }
 
     public String showFirstNonPrioritaryTask() throws QueueIsEmptyException{
@@ -134,17 +128,20 @@ public class Controller {
         return queueTask.front().toString();
     }
 
-    public void managePriorityTask() throws PriorityQueueIsEmptyException, HashIsEmptyException, NonExistentKeyException, ObjectNotFoundException{
+    public void managePriorityTask() throws PriorityQueueIsEmptyException, HashIsEmptyException, NonExistentKeyException, ObjectNotFoundException, QueueIsEmptyException{
 
-        Task currentTask = priorityQueueTask.extractMax();
+        Task currentTask = heapTask.extractMax();
         int key = currentTask.getKey();
         
         HashNode hashNode = hashTableTask.searchElement(key);
         hashNode.setStatus(HashNodeStatus.DELETED);
-        
-        int index = priorityQueueTask.getHeap().getIndexForAnObject(currentTask);
-        priorityQueueTask.getHeap().remove(index);
-        actions.push(new Action(ActionType.COMPLETE, currentTask));
+
+        int index = heapTask.getIndexForAnObject(currentTask);
+
+        if(index != -1){
+            heapTask.remove(index);
+            actions.push(new Action(ActionType.COMPLETE, currentTask));
+        }
     }
 
     public void manageNonPriorityTask() throws QueueIsEmptyException, HashIsEmptyException, NonExistentKeyException{
@@ -164,8 +161,10 @@ public class Controller {
         Task task = lastAction.getTask();
         if(lastAction.getActionType().equals(ActionType.ADD)){
             if(task.getPriorityLevel().equals(PriorityLevel.PRIORITY)){
-                int index = priorityQueueTask.getHeap().getIndexForAnObject(task);
-                priorityQueueTask.getHeap().remove(index);                
+                int index = heapTask.getIndexForAnObject(task);
+                if(index != -1){
+                    heapTask.remove(index); 
+                }             
             }
             else if(task.getPriorityLevel().equals(PriorityLevel.NON_PRIORITY)){
                 queueTask.getList().delete(task);
@@ -182,14 +181,12 @@ public class Controller {
         }
         else{
             if(task.getPriorityLevel().equals(PriorityLevel.PRIORITY)){
-                priorityQueueTask.insert(task);
+                heapTask.insert(task);
             }
             else if(task.getPriorityLevel().equals(PriorityLevel.NON_PRIORITY)){
                 queueTask.enQueue(task);
             }
             hashTableTask.restoreElement(task.getKey(), task);
         }
-        priorityQueueTask.getHeap().buildMaxHeap();
-        priorityQueueTask.getHeap().heapsort();
     }
 }

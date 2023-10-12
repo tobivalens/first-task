@@ -60,7 +60,7 @@ public class Task implements Comparable<Task>, Cloneable{
     @Override
     public int compareTo(Task otherTask) {
         return otherTask.limitDate.compareTo(this.limitDate);
-    }
+    }       
 
     @Override
     public String toString() {
