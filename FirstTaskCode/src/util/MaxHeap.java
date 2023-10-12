@@ -110,7 +110,7 @@ public class MaxHeap<T extends Comparable<T>>{
             throw new ObjectNotFoundException("The index is not valid");
         }
         else{
-            heap[index] = null;
+            heap[index] = heap[size--];
             maxHeapify(index);
         }
     }
