@@ -3,7 +3,7 @@ package model;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class Task implements Comparable<Task>{
+public class Task implements Comparable<Task>, Cloneable{
     
     private String name;
     private String description;
@@ -11,12 +11,12 @@ public class Task implements Comparable<Task>{
     private Calendar limitDate;
     private PriorityLevel priorityLevel;
     
-    public Task(String name, String description, int key, Calendar limitDate, PriorityLevel priorityLevel) {
+    public Task(String name, String description, int key, Calendar lim, PriorityLevel x) {
         this.name = name;
         this.description = description;
         this.key = key;
-        this.limitDate = limitDate;
-        this.priorityLevel = priorityLevel;
+        this.limitDate = lim;
+        this.priorityLevel = x;
     }
 
     public String getName() {
@@ -59,8 +59,8 @@ public class Task implements Comparable<Task>{
 
     @Override
     public int compareTo(Task otherTask) {
-        return this.limitDate.compareTo(otherTask.limitDate);
-    }
+        return otherTask.limitDate.compareTo(this.limitDate);
+    }       
 
     @Override
     public String toString() {
@@ -70,5 +70,10 @@ public class Task implements Comparable<Task>{
 
     public int getKey(){
         return key;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

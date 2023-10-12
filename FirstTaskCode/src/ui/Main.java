@@ -7,6 +7,7 @@ import customExceptions.NonExistentKeyException;
 import customExceptions.ObjectNotFoundException;
 import customExceptions.PriorityQueueIsEmptyException;
 import customExceptions.QueueIsEmptyException;
+import customExceptions.StackIsEmptyException;
 import model.Controller;
 
 public class Main {
@@ -19,7 +20,7 @@ public class Main {
     }
 
     public static void main(String[] args){
-       
+        
         Main main = new Main();
         int option= -1;
         do {
@@ -27,8 +28,11 @@ public class Main {
             main.answerOption(option);
         }while (option !=0);
     }
+  
+    
 
     public void answerOption(int userOption) {
+       
         switch(userOption) {
             case 0:
                 System.out.println("¡Goodbye!");
@@ -40,28 +44,42 @@ public class Main {
                 modifyTask();
                 break;
             case 3:
-                deleteTask();
-                break;
-            case 4:
                 showAllTasks();
                 break;
-            case 5:
+            case 4:
                 showPrioritaryTasks();
                 break;
-            case 6:
+            case 5:
                 showNonPrioritaryTasks();
                 break;
+            case 6:
+                managePriorityTask();
+                break;
+            case 7:
+                manageNonPriorityTask();
+                break;
+            case 8:
+                revertLastAction();
+                break;
+
+            case 9:
+                testCases();
+                break;
+
         }
     }
 
     public int showMenuAndGetOption() {
         int input;
-        System.out.println("\n\n¡Welcome to the organization app!\n"+
+        System.out.println("\nWelcome to the organization app!\n"+
                 "(1) Add Task\n" +
                 "(2) Modify Task\n" +
-                "(3) Delete Task\n" +
-                "(4) Show list of all Tasks\n" +
-                "(5) Undo an Action\n" +
+                "(3) Show list of all Tasks\n" +
+                "(4) Show list of priority tasks\n" +
+                "(5) Show list of non priority tasks\n" +
+                "(6) Manage priority task\n" +
+                "(7) Manage non priority task\n" +
+                "(8) Undo last action\n" +
                 "(0) Exit\n"
         );
         input = sc.nextInt();
@@ -91,7 +109,7 @@ public class Main {
         try {
             controller.addTask(title, description, date, state, key);
         } catch (HeapFullException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
 
         System.out.println(controller.showAllTasks());
@@ -121,43 +139,21 @@ public class Main {
         try {
             controller.modifyTask(key, title, description, date, state);
         } catch (HashIsEmptyException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         } catch (NonExistentKeyException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         } catch (ObjectNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         } catch (HeapFullException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.out.println(e.getMessage());
+        } catch (CloneNotSupportedException e) {
+            System.out.println(e.getMessage());
         }
 
         System.out.println(controller.showAllTasks());
     }
 
     public void showAllTasks(){
-        System.out.println(controller.showAllTasks());
-    }
-
-    private void deleteTask(){
-
-        System.out.println("Please enter the key of the task you'd like to delete");
-        int key= sc.nextInt();
-
-        try {
-            controller.deleteTask(key);
-        } catch (HashIsEmptyException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NonExistentKeyException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ObjectNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         System.out.println(controller.showAllTasks());
     }
 
@@ -180,33 +176,83 @@ public class Main {
                 int option = sc.nextInt();
 
                 if(option == 1){
-                   // controller.managePriorityTask(){
-                        
-                  //  }
+                    
+                    try {
+                        controller.managePriorityTask();
+                    } catch (ObjectNotFoundException e) {
+                        System.out.println(e.getMessage());
+                    } catch (QueueIsEmptyException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    
                 }
             }
             else{
                 System.out.println("There aren't any pending prioritary tasks to manage");
             }
         } catch (PriorityQueueIsEmptyException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.out.println(e.getMessage());
+        } catch (HashIsEmptyException e) {
+            System.out.println(e.getMessage());
+        } catch (NonExistentKeyException e) {
+            System.out.println(e.getMessage());
         }
     }
 
     public void manageNonPriorityTask(){
         
-        try {
+        try{
             if(controller.showFirstNonPrioritaryTask().equals("") == false){
                     System.out.println("This is the first non priority task registered");
                     System.out.println(controller.showFirstNonPrioritaryTask());
+
+                    System.out.println("Would you like to mark this task as completed? \n(1) Yes \n(2) No\n");
+                    int option = sc.nextInt();
+
+                    if(option == 1){
+                        try {
+                            controller.manageNonPriorityTask();
+                        } catch (HashIsEmptyException e) {
+                            System.out.println(e.getMessage());
+                        } catch (NonExistentKeyException e) {
+                            System.out.println(e.getMessage());
+                        }
+                    }
                 }
                 else{
                     System.out.println("There aren't any pending non prioritary tasks to manage");
                 }
-        } catch (QueueIsEmptyException e) {
+        }
+        catch (QueueIsEmptyException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void revertLastAction(){
+        try {
+            controller.revertLastAction();
+        } catch (StackIsEmptyException e) {
+            System.out.println(e.getMessage());
+        } catch (HashIsEmptyException e) {
+            System.out.println(e.getMessage());
+        } catch (NonExistentKeyException e) {
+            System.out.println(e.getMessage());
+        } catch (ObjectNotFoundException e) {
+            System.out.println(e.getMessage());
+        } catch (HeapFullException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void testCases(){
+        try {
+            controller.addTask("name", "null", "2022/11/01", 1, 12);
+            controller.addTask("name2", "null", "2022/11/02", 1, 1);
+            controller.addTask("name3", "null", "2022/11/03", 2, 15);
+            controller.addTask("name4", "null", "2022/11/04", 2, 18);
+        } catch (HeapFullException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.getMessage();
         }
     }
 }

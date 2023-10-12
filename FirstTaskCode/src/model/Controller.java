@@ -8,26 +8,27 @@ import customExceptions.NonExistentKeyException;
 import customExceptions.ObjectNotFoundException;
 import customExceptions.PriorityQueueIsEmptyException;
 import customExceptions.QueueIsEmptyException;
+import customExceptions.StackIsEmptyException;
 import util.HashNode;
 import util.HashNodeStatus;
 import util.HashTable;
+import util.MaxHeap;
 import util.Stack;
 import util.Queue;
-import util.MaxPriorityQueue;
 
 public class Controller {
     
     private HashTable<Integer, Task> hashTableTask;
-    private Stack<Task> actions;
+    private Stack<Action> actions;
     private Queue<Task> queueTask;
-    private MaxPriorityQueue<Task> priorityQueueTask;
+    private MaxHeap<Task> heapTask;
 
     public Controller (){
 
         hashTableTask = new HashTable<Integer, Task>();
-        actions = new Stack<Task>();
+        actions = new Stack<Action>();
         queueTask = new Queue<Task>();
-        priorityQueueTask = new MaxPriorityQueue<Task>(10);
+        heapTask = new MaxHeap<>(200);
     }
 
     public void addTask(String name, String description, String strLimitDate, int priorityLevel, int key) throws HeapFullException{
@@ -49,17 +50,23 @@ public class Controller {
         Task newTask = new Task(name, description, key, limitDate, priority);
 
         if(priority.equals(PriorityLevel.PRIORITY)){
-            priorityQueueTask.insert(newTask);
+            heapTask.insert(newTask);
         }
         else if(priority.equals(PriorityLevel.NON_PRIORITY)){
             queueTask.enQueue(newTask);
         }
         hashTableTask.insertElement(key, newTask);
+        Action lastAction = new Action(ActionType.ADD, newTask);
+        actions.push(lastAction);
     }
 
-    public void modifyTask(int key, String newName, String newDescription, String newStrLimitDate, int newPriorityLevel) throws HashIsEmptyException, NonExistentKeyException, ObjectNotFoundException, HeapFullException{
+    public void modifyTask(int key, String newName, String newDescription, String newStrLimitDate, int newPriorityLevel) throws HashIsEmptyException, NonExistentKeyException, ObjectNotFoundException, HeapFullException, CloneNotSupportedException{
 
         Task task = hashTableTask.searchElement(key).getValue();
+        Task originalTask = null;
+
+        originalTask = (Task)task.clone();
+
         PriorityLevel currentPriority = task.getPriorityLevel();
 
         String[] parts = newStrLimitDate.split("/");
@@ -81,30 +88,19 @@ public class Controller {
         task.setLimitDate(newLimitDate);
         task.setPriorityLevel(newPriority);
 
-        if(!currentPriority.equals(newPriority)){
+        if(currentPriority.equals(newPriority) == false){
             if(currentPriority.equals(PriorityLevel.PRIORITY)){
-                int index = priorityQueueTask.getHeap().getIndexForAnObject(task);
-                priorityQueueTask.getHeap().remove(index);
+                int index = heapTask.getIndexForAnObject(task);
+                heapTask.remove(index);
                 queueTask.enQueue(task);
             }
             else if(currentPriority.equals(PriorityLevel.NON_PRIORITY)){
                 queueTask.getList().delete(task);
-                priorityQueueTask.insert(task);
+                heapTask.insert(task);
             }
         }
-    }
-
-    public void deleteTask(int key) throws HashIsEmptyException, NonExistentKeyException, ObjectNotFoundException{
-
-        Task task = hashTableTask.searchElement(key).getValue();
-        if(task.getPriorityLevel().equals(PriorityLevel.PRIORITY)){
-            int index = priorityQueueTask.getHeap().getIndexForAnObject(task);
-            priorityQueueTask.getHeap().remove(index);
-        }
-        else if(task.getPriorityLevel().equals(PriorityLevel.NON_PRIORITY)){
-            queueTask.getList().delete(task);
-        }
-        hashTableTask.deleteElement(key);
+        Action lastAction = new Action(ActionType.MODIFY, task, originalTask);
+        actions.push(lastAction);
     }
 
     public String showAllTasks(){
@@ -114,7 +110,7 @@ public class Controller {
 
     public String showPrioritaryTasks(){
 
-        return priorityQueueTask.printHeap();
+        return heapTask.printHeap();
     }
 
     public String showNonPrioritaryTasks(){
@@ -124,7 +120,7 @@ public class Controller {
 
     public String showFirstPrioritaryTask() throws PriorityQueueIsEmptyException{
 
-        return priorityQueueTask.maximum().toString();
+        return heapTask.getMax().toString();
     }
 
     public String showFirstNonPrioritaryTask() throws QueueIsEmptyException{
@@ -132,17 +128,65 @@ public class Controller {
         return queueTask.front().toString();
     }
 
-    public void managePriorityTask() throws PriorityQueueIsEmptyException, HashIsEmptyException, NonExistentKeyException{
+    public void managePriorityTask() throws PriorityQueueIsEmptyException, HashIsEmptyException, NonExistentKeyException, ObjectNotFoundException, QueueIsEmptyException{
 
-        Task currentTask = priorityQueueTask.extractMax();
+        Task currentTask = heapTask.extractMax();
+        int key = currentTask.getKey();
+        
+        HashNode hashNode = hashTableTask.searchElement(key);
+        hashNode.setStatus(HashNodeStatus.DELETED);
+
+        int index = heapTask.getIndexForAnObject(currentTask);
+
+        if(index != -1){
+            heapTask.remove(index);
+            actions.push(new Action(ActionType.COMPLETE, currentTask));
+        }
+    }
+
+    public void manageNonPriorityTask() throws QueueIsEmptyException, HashIsEmptyException, NonExistentKeyException{
+        
+        Task currentTask = queueTask.front().getValue();
         int key = currentTask.getKey();
 
         HashNode hashNode = hashTableTask.searchElement(key);
         hashNode.setStatus(HashNodeStatus.DELETED);
+        queueTask.deQueue();
+        actions.push(new Action(ActionType.COMPLETE, currentTask));
     }
 
-    public void manageNonPriorityTask() throws QueueIsEmptyException{
-        
-        Task currentTask = queueTask.front().getValue();
+    public void revertLastAction() throws StackIsEmptyException, HashIsEmptyException, NonExistentKeyException, ObjectNotFoundException, HeapFullException{
+
+        Action lastAction = actions.top().getValue();
+        Task task = lastAction.getTask();
+        if(lastAction.getActionType().equals(ActionType.ADD)){
+            if(task.getPriorityLevel().equals(PriorityLevel.PRIORITY)){
+                int index = heapTask.getIndexForAnObject(task);
+                if(index != -1){
+                    heapTask.remove(index); 
+                }             
+            }
+            else if(task.getPriorityLevel().equals(PriorityLevel.NON_PRIORITY)){
+                queueTask.getList().delete(task);
+            }
+            hashTableTask.deleteElement(task.getKey());
+        }    
+        else if(lastAction.getActionType().equals(ActionType.MODIFY)){
+            Task originalTask = lastAction.getOriginalTask();
+            task.setName(originalTask.getName());
+            task.setDescription(originalTask.getDescription());
+            task.setLimitDate(originalTask.getLimitDate());
+            task.setPriorityLevel(originalTask.getPriorityLevel());
+
+        }
+        else{
+            if(task.getPriorityLevel().equals(PriorityLevel.PRIORITY)){
+                heapTask.insert(task);
+            }
+            else if(task.getPriorityLevel().equals(PriorityLevel.NON_PRIORITY)){
+                queueTask.enQueue(task);
+            }
+            hashTableTask.restoreElement(task.getKey(), task);
+        }
     }
 }

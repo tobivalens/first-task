@@ -2,120 +2,137 @@ package util;
 
 import customExceptions.HeapFullException;
 import customExceptions.ObjectNotFoundException;
+import customExceptions.QueueIsEmptyException;
 
 public class MaxHeap<T extends Comparable<T>>{
-    
-    public final int MAX_SIZE = 20;
-    private T[] heap;
+
     private int size;
+    private T[] heap;
 
-    @SuppressWarnings("unchecked")
-    public MaxHeap() {
+    public MaxHeap(int maxsize){
+        this.heap = (T[]) new Comparable[maxsize];
         this.size = 0;
-        heap = (T[]) new Comparable[MAX_SIZE];
     }
 
-    public void insert(T element) throws HeapFullException {
-        if(size == heap.length - 1) {
-            throw new HeapFullException("The heap is full. Can't add more elements.");
-        }
-        heap[++size] = element;
-        int current = size;
-        while(current > 1 && heap[current].compareTo(heap[parent(current)]) > 0) {
-            switchPlaces(current, parent(current));
-            current = parent(current);
-        }
-    }
-
-    private void maxHeapify(int pos) {
+    public void maxHeapify(int i){
+        int l = leftChild(i);
+        int r = rightChild(i);
         int largest;
-        int l = leftChild(pos);
-        int r = rightChild(pos);
-        if(l <= size && heap[l].compareTo(heap[pos]) > 0){
+        if(l < size && heap[l].compareTo(heap[i]) > 0){
             largest = l;
         }
-        else{
-            largest = pos;
+        else {
+            largest = i;
         }
-        if(r <= size && heap[r].compareTo(heap[largest]) > 0){
+        if
+        (r < size && heap[r].compareTo(heap[largest]) > 0){
             largest = r;
         }
-        if(largest != pos){
-            switchPlaces(pos, largest);
+        if(largest != i){
+            swap(i, largest);
             maxHeapify(largest);
         }
     }
 
-    public void buildMaxHeap() {
-        for(int i = size / 2; i >= 1; i--){
-            maxHeapify(i);
+    public boolean isEmpty() {
+        return heap[0] == null;
+    }
+
+    public int searchTaskIndex(T element){
+        for(int i = 0; i < size; i++){
+            if(heap[i] == element){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public T[] getHeap(){
+        return heap;
+    }
+
+    public int getSize(){
+        return size;
+    }
+
+    public void setSize(int heapSize){
+        this.size = heapSize;
+    }
+
+    public void insert(T element) throws HeapFullException{
+        if(size > heap.length){
+            throw new HeapFullException("The heap is full");
+        }
+        heap[size] = element;
+        int current = size;
+        while(current > 0 && heap[current].compareTo(heap[parent(current)]) > 0){
+            swap(current, parent(current));
+            current = parent(current);
+        }
+        size++;
+    }
+
+    public T extractMax() throws QueueIsEmptyException {
+        if(size < 1){
+            throw new QueueIsEmptyException("The heap is empty");
+        }
+        T max = getMax();
+        heap[0] = heap[size - 1];
+        size--;
+        maxHeapify(0);
+        return max;
+    }
+
+    public T getMax() {
+        return heap[0];
+    }
+
+    private void swap(int i, int j) {
+        T temp = heap[i];
+        heap[i] = heap[j];
+        heap[j] = temp;
+    }
+
+    private int parent(int index) {
+        return index / 2;
+    }
+
+    private int leftChild(int i){
+        return 2 * i + 1;
+    }
+
+    private int rightChild(int i){
+        return 2 * i + 2;
+    }
+
+    public void remove(int index) throws ObjectNotFoundException{
+        if(index < 0 || index >= size){
+            throw new ObjectNotFoundException("The index is not valid");
+        }
+        else{
+            heap[index] = heap[size--];
+            maxHeapify(index);
         }
     }
 
-    public void heapsort() {
-        int tmp = size;
-        for(int i = size; i >= 2; i--){
-            switchPlaces(1, i);
-            size--;
-            maxHeapify(1);
-        }
-        size = tmp;
-    }
-
-    public T remove(int pos) {
-        T extracted = heap[pos];
-        heap[pos] = heap[size--];
-        maxHeapify(pos);
-        return extracted;
-    }
-
-    public int getIndexForAnObject(T object) throws ObjectNotFoundException{
+    public int getIndexForAnObject(T element){
         for(int i = 0; i < heap.length; i++){
             if(heap[i] != null){
-                if(heap[i].equals(object)){
+                if(heap[i].equals(element)){
                     return i;
                 }
             }
         }
-        throw new ObjectNotFoundException("Couldn't find the object");
-    }
-    
-    private int parent(int pos) {
-        return pos / 2;
+        return -1;
     }
 
-    private int leftChild(int pos) {
-        return (2 * pos);
-    }
-
-    private int rightChild(int pos) {
-        return (2 * pos) + 1;
-    }
-
-    private void switchPlaces(int fpos, int spos) {
-        T tmp;
-        tmp = heap[fpos];
-        heap[fpos] = heap[spos];
-        heap[spos] = tmp;
-    }
-
-    public int getSize() {
-        return this.size;
-    }
-    
-    public T getElement(int pos) {
-        return heap[pos];
-    }
-
-    public void setElement(int pos, T element) {
-        heap[pos] = element;
-    }
-
-    public int getMAX_SIZE() {
-        return MAX_SIZE;
-    }
-
-    public T[] getHeap() {
-        return heap;
+    public String printHeap(){
+        String msg = "";
+        for(int i = 0; i < heap.length; i++){
+            if(heap[i] != null){
+                msg += heap[i].toString();
+            }
+        }
+        return msg;
     }
 }
